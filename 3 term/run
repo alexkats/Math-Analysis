@@ -1,0 +1,48 @@
+#!/bin/bash
+
+if ! g++ -o2 -Wall random.cpp -o random
+then
+    exit
+fi
+
+declare -a s
+./random > ans
+rm -f bad
+((n = 0))
+
+while read line
+do
+    s[n]=$line
+    ((n++))
+done < ans
+
+((r = 0))
+
+for ((i = 0; i < n; i++))
+do
+    ((q = n - i - 1))
+    echo -n "${s[$i]} | $q remaining  | (1/0/exit): "
+    read good
+
+    if [[ $good == "exit" ]]
+    then
+        rm random
+        rm ans
+        exit
+    fi
+
+    if [[ $good == "0" ]]
+    then
+        ((r++))
+        echo ${s[$i]} >> bad
+    fi
+done
+
+if ((r == 0))
+then
+    echo "You are brilliant!"
+fi
+
+rm ans
+rm random
+rm -f bad
